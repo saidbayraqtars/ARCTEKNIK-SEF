@@ -1,0 +1,89 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.bayraktar.sef",
+  "productName": "ArcTeknik Sef",
+  "artifactName": "ArcTeknik_Sef_Setup.${ext}",
+  "directories": {
+    "output": "release-restaurant"
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "saidbayraqtars",
+      "repo": "ARCTEKNIK-SEF-releases",
+      "releaseType": "release"
+    }
+  ],
+  "extraMetadata": {
+    "edition": "restaurant",
+    "version": "1.10.4"
+  },
+  "files": [
+    "main.js",
+    "splash.html",
+    "erp-preload.js",
+    "backup-handlers.js",
+    "backup/**/*",
+    "assets/**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "../server",
+      "to": "app/server",
+      "filter": [
+        "**/*",
+        "!node_modules/.cache/**",
+        "!uploads/**",
+        "!baileys-auth/**",
+        "!.wwebjs_auth/**",
+        "!.wwebjs_cache/**",
+        "!wwebjs_auth/**",
+        "!*.log",
+        "!logs/**",
+        "!license.lic",
+        "!lc",
+        "!setupLog.json",
+        "!whatsappTemplates.json",
+        "!.env",
+        "!setup.json",
+        "!node_modules/.bin/**",
+        "!node_modules/nodemon/**",
+        "!node_modules/@whiskeysockets/**",
+        "!node_modules/libsignal/**",
+        "!node_modules/sharp/**",
+        "!node_modules/@img/**",
+        "!node_modules/protobufjs/**",
+        "!node_modules/javascript-obfuscator/**",
+        "!node_modules/@javascript-obfuscator/**",
+        "!node_modules/class-validator/**",
+        "!node_modules/libphonenumber-js/**"
+      ]
+    },
+    {
+      "from": "../client/dist",
+      "to": "app/client/dist"
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "assets/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "perMachine": true,
+    "createDesktopShortcut": false,
+    "createStartMenuShortcut": false,
+    "installerIcon": "assets/icon.ico",
+    "uninstallerIcon": "assets/icon.ico",
+    "uninstallDisplayName": "ArcTeknik Sef",
+    "installerLanguages": ["tr"],
+    "language": "1055",
+    "include": "installer-restaurant.nsh"
+  }
+}

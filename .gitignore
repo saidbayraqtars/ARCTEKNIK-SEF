@@ -1,0 +1,84 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Bayraktar Yazilim Suite — .gitignore
+# Sırlar (lisans private.key, .env, WhatsApp oturumu) ve büyük türev dosyalar
+# repoya GİRMEZ. Şüphede kal → ignore et.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Bağımlılıklar ────────────────────────────────────────────────────────────
+node_modules/
+
+# ── SIRLAR / KİMLİK BİLGİLERİ (asla commit'leme) ─────────────────────────────
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+private.key
+# Lisans dosyaları + imzalama
+*.lic
+.tslic
+license.lic
+lc
+# license-manager: RSA private key, müşteri lisans kayıtları (PII)
+license-manager/private.key
+license-manager/data/
+licenses.json
+licenses.json.migrated
+
+# ── WhatsApp / oturum kimlikleri ─────────────────────────────────────────────
+baileys-auth/
+.wwebjs_auth/
+.wwebjs_cache/
+wwebjs_auth/
+whatsapp-queue.json
+whatsappTemplates.json
+
+# ── Kurulum / çalışma-zamanı durum dosyaları (makineye özel) ─────────────────
+setup.json
+setupLog.json
+
+# ── Loglar ───────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── Kullanıcı yüklemeleri ────────────────────────────────────────────────────
+uploads/
+
+# ── Derleme çıktıları (vite/electron — her klonda yeniden üretilir) ──────────
+dist/
+build/
+release/
+release-restaurant/
+out/
+*.exe
+# Yerel dağıtım/USB hazırlama klasörü (installer exe + OKU.txt; repoya konmaz)
+master kurulum/
+# Electron-builder güncelleme manifestoları (release ile üretilir)
+latest.yml
+app-update.yml
+
+# ── Arşivlenen eski mimari (ölü kod + eski .env sırları) ─────────────────────
+# Eski suite arşivi repo DIŞI kalır; askıya alınan FastPOS + ayrı uygulamaya
+# taşınacak e-Fatura arşivleri ise VERSİYONLANIR (geri getirme kaynağı).
+.archive/*
+!.archive/fastpos/
+!.archive/efatura/
+
+# ── Electron paketleme ara/araç çıktıları ────────────────────────────────────
+.suite-out/
+.suite-stage/
+.builder-*.json
+playwright-browsers/
+
+# ── Editör / OS ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Yerel ajan/araç yapılandırması ───────────────────────────────────────────
+.claude/
+
+# Yerel SQL kurtarma yedegi (makine onarimi sirasinda uretilir, repoya konmaz)
+_sqlserver-regbackup.reg

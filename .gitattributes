@@ -1,0 +1,23 @@
+# Satır sonlarını normalize et — repoda LF, checkout'ta OS'e göre.
+* text=auto
+
+# Açıkça LF kalması gerekenler (script/shell)
+*.sh text eol=lf
+
+# Windows script'leri CRLF
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# İkili dosyalar (diff/normalize etme)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.pdf binary
+*.exe binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

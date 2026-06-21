@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ARC Yedekleme Merkezi</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 24px;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #334155;
+        }
+        .logo {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+        }
+        h1 { font-size: 22px; font-weight: 700; }
+        .subtitle { font-size: 13px; color: #94a3b8; margin-top: 2px; }
+        .config-bar {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 12px;
+            margin-bottom: 24px;
+        }
+        .config-bar .item { display: flex; align-items: center; gap: 6px; }
+        .config-bar .label { color: #64748b; }
+        .config-bar .value { color: #e2e8f0; font-weight: 500; }
+        .status-ok { color: #10b981; }
+        .status-err { color: #ef4444; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 22px;
+        }
+        .card h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card h2 .icon {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .card.backup h2 .icon { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .card.restore h2 .icon { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+        label.field-label {
+            display: block;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .input-row { display: flex; gap: 8px; margin-bottom: 14px; }
+        .input {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+        }
+        .input:focus { border-color: #3b82f6; }
+        .input:read-only { color: #94a3b8; }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        button:hover { background: #2563eb; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.secondary { background: #475569; }
+        button.secondary:hover { background: #334155; }
+        button.danger { background: #dc2626; }
+        button.danger:hover { background: #b91c1c; }
+        button.warn { background: #f59e0b; color: #1e293b; }
+        button.warn:hover { background: #d97706; }
+        button.success { background: #10b981; }
+        button.success:hover { background: #059669; }
+
+        .drive-list {
+            margin-bottom: 14px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+        .drive {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: border-color 0.15s;
+        }
+        .drive:hover { border-color: #3b82f6; }
+        .drive.removable { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+        .drive .info { display: flex; flex-direction: column; }
+        .drive .label-text { font-weight: 600; }
+        .drive .meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+        .drive .badge {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: #334155;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .drive.removable .badge { background: rgba(16, 185, 129, 0.25); color: #10b981; }
+
+        .existing-list {
+            max-height: 280px;
+            overflow-y: auto;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #334155;
+        }
+        .existing-list h3 {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .file-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        .file-row .name { font-weight: 600; color: #cbd5e1; }
+        .file-row .meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+        .file-actions { display: flex; gap: 4px; }
+        .file-actions button { padding: 4px 9px; font-size: 11px; }
+
+        .log {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-family: "Cascadia Code", "Consolas", monospace;
+            font-size: 12px;
+            color: #94a3b8;
+            min-height: 120px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        .log .line { margin-bottom: 4px; }
+        .log .line .time { color: #64748b; margin-right: 8px; }
+        .log .line.info { color: #94a3b8; }
+        .log .line.success { color: #10b981; }
+        .log .line.error { color: #ef4444; }
+        .log .line.warn { color: #f59e0b; }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            color: #fbbf24;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px; height: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn-row { display: flex; gap: 8px; }
+        .btn-row button { flex: 1; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🛡️</div>
+            <div>
+                <h1>ARC Yedekleme Merkezi</h1>
+                <div class="subtitle">Veritabanı yedekleme ve geri yükleme aracı</div>
+            </div>
+        </header>
+
+        <div class="config-bar" id="configBar">
+            <div class="item"><span class="label">Sunucu:</span> <span class="value" id="cfgServer">—</span></div>
+            <div class="item"><span class="label">Veritabanı:</span> <span class="value" id="cfgDb">—</span></div>
+            <div class="item"><span class="label">Kimlik:</span> <span class="value" id="cfgAuth">—</span></div>
+            <div class="item"><span class="label">Durum:</span> <span class="value" id="cfgStatus">—</span></div>
+        </div>
+
+        <div class="grid">
+            <!-- BACKUP CARD -->
+            <div class="card backup">
+                <h2><span class="icon">↓</span> Yedek Al</h2>
+
+                <label class="field-label">Yedek Konumu</label>
+                <div class="input-row">
+                    <input type="text" class="input" id="backupDest" placeholder="Klasör seç..." readonly>
+                    <button class="secondary" id="btnPickFolder">Seç</button>
+                </div>
+
+                <label class="field-label">Tespit Edilen Sürücüler (USB öncelikli)</label>
+                <div class="drive-list" id="driveList">
+                    <div style="text-align:center; padding:14px; color:#64748b; font-size:12px;">Yükleniyor...</div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="success" id="btnBackup">📦 Yedek Al</button>
+                    <button class="secondary" id="btnRefreshDrives">↻</button>
+                </div>
+
+                <div class="existing-list" id="existingBackups" style="display:none;">
+                    <h3>Bu Konumdaki Yedekler</h3>
+                    <div id="existingList"></div>
+                </div>
+            </div>
+
+            <!-- RESTORE CARD -->
+            <div class="card restore">
+                <h2><span class="icon">↑</span> Geri Yükle</h2>
+
+                <div class="warning-box">
+                    <strong>⚠ Önemli:</strong> Geri yükleme mevcut veritabanını TAMAMEN değiştirir. Ana uygulama açıksa kapatın. İşlem birkaç dakika sürebilir.
+                </div>
+
+                <label class="field-label">Yedek Dosyası (.bak)</label>
+                <div class="input-row">
+                    <input type="text" class="input" id="restoreFile" placeholder="Dosya seç..." readonly>
+                    <button class="secondary" id="btnPickFile">Seç</button>
+                </div>
+
+                <button class="warn" id="btnRestore" style="width:100%; justify-content:center;">⚠ Geri Yükle</button>
+            </div>
+        </div>
+
+        <div class="card" style="padding: 18px 22px;">
+            <h2 style="margin-bottom: 10px;"><span class="icon" style="background: rgba(100,116,139,0.2); color:#94a3b8;">▶</span> İşlem Günlüğü</h2>
+            <div class="log" id="log">
+                <div class="line info"><span class="time">--:--:--</span>Hazır.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const $ = (id) => document.getElementById(id);
+        const log = (msg, type = 'info') => {
+            const el = $('log');
+            const time = new Date().toLocaleTimeString('tr-TR');
+            const line = document.createElement('div');
+            line.className = `line ${type}`;
+            line.innerHTML = `<span class="time">${time}</span>${msg}`;
+            el.appendChild(line);
+            el.scrollTop = el.scrollHeight;
+        };
+
+        const setBusy = (busy) => {
+            ['btnBackup', 'btnRestore', 'btnPickFolder', 'btnPickFile', 'btnRefreshDrives'].forEach(id => {
+                const b = $(id);
+                if (b) b.disabled = busy;
+            });
+        };
+
+        let currentDestFolder = '';
+
+        const loadConfig = async () => {
+            const cfg = await window.backup.getConfig();
+            if (!cfg.ok) {
+                $('cfgStatus').innerHTML = `<span class="status-err">${cfg.error}</span>`;
+                log(cfg.error, 'error');
+                return;
+            }
+            $('cfgServer').textContent = cfg.server;
+            $('cfgDb').textContent = cfg.database;
+            $('cfgAuth').textContent = cfg.windowsAuth ? 'Windows Auth' : 'SQL Auth';
+            $('cfgStatus').innerHTML = `<span class="status-ok">Yapılandırma yüklendi</span>`;
+            log('Yapılandırma yüklendi.', 'success');
+        };
+
+        const renderDrives = (drives) => {
+            const list = $('driveList');
+            if (!drives.length) {
+                list.innerHTML = `<div style="text-align:center; padding:14px; color:#64748b; font-size:12px;">Sürücü bulunamadı.</div>`;
+                return;
+            }
+            list.innerHTML = drives.map(d => `
+                <div class="drive ${d.isRemovable ? 'removable' : ''}" data-path="${d.path}">
+                    <div class="info">
+                        <span class="label-text">${d.letter} ${d.label ? '— ' + d.label : ''}</span>
+                        <span class="meta">${d.typeName}${d.freeFmt ? ' • Boş: ' + d.freeFmt + ' / ' + d.sizeFmt : ''}</span>
+                    </div>
+                    <span class="badge">${d.isRemovable ? 'USB' : d.typeName.split(' ')[0]}</span>
+                </div>
+            `).join('');
+            list.querySelectorAll('.drive').forEach(el => {
+                el.addEventListener('click', async () => {
+                    const drive = el.dataset.path;
+                    currentDestFolder = drive + 'ARCTEKNIK-Yedekler';
+                    $('backupDest').value = currentDestFolder;
+                    log(`Hedef sürücü seçildi: ${drive}`, 'info');
+                    await refreshExisting();
+                });
+            });
+        };
+
+        const refreshDrives = async () => {
+            const drives = await window.backup.listDrives();
+            renderDrives(drives);
+        };
+
+        const refreshExisting = async () => {
+            if (!currentDestFolder) {
+                $('existingBackups').style.display = 'none';
+                return;
+            }
+            const files = await window.backup.listExisting(currentDestFolder);
+            const wrap = $('existingBackups');
+            const inner = $('existingList');
+            if (!files.length) {
+                wrap.style.display = 'none';
+                return;
+            }
+            wrap.style.display = 'block';
+            inner.innerHTML = files.map(f => `
+                <div class="file-row">
+                    <div>
+                        <div class="name">${f.name}</div>
+                        <div class="meta">${f.mtimeFmt} • ${f.sizeFmt}</div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="warn" data-restore="${f.path.replace(/"/g, '&quot;')}">Geri Yükle</button>
+                        <button class="danger" data-delete="${f.path.replace(/"/g, '&quot;')}">Sil</button>
+                    </div>
+                </div>
+            `).join('');
+            inner.querySelectorAll('[data-restore]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    $('restoreFile').value = btn.dataset.restore;
+                    runRestore();
+                });
+            });
+            inner.querySelectorAll('[data-delete]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm(`${btn.dataset.delete} silinsin mi?`)) return;
+                    const r = await window.backup.deleteFile(btn.dataset.delete);
+                    if (r.ok) {
+                        log(`Silindi: ${btn.dataset.delete}`, 'warn');
+                        await refreshExisting();
+                    } else {
+                        log(`Silme hatası: ${r.error}`, 'error');
+                    }
+                });
+            });
+        };
+
+        const runBackup = async () => {
+            if (!currentDestFolder) {
+                alert('Önce yedek konumu seçin.');
+                return;
+            }
+            setBusy(true);
+            log(`Yedekleme başlatıldı: ${currentDestFolder}`, 'info');
+            const r = await window.backup.runBackup(currentDestFolder);
+            if (r.ok) {
+                log(`✓ Yedek alındı: ${r.name} (${r.sizeFmt})`, 'success');
+                await refreshExisting();
+            } else {
+                log(`✗ Hata: ${r.error}`, 'error');
+            }
+            setBusy(false);
+        };
+
+        const runRestore = async () => {
+            const file = $('restoreFile').value;
+            if (!file) {
+                alert('Önce yedek dosyası seçin.');
+                return;
+            }
+            const sure = confirm(
+                'DİKKAT!\n\nBu işlem mevcut veritabanını seçtiğiniz yedek ile TAMAMEN değiştirecek. ' +
+                'Tüm mevcut veriler silinecek.\n\nDevam edilsin mi?'
+            );
+            if (!sure) return;
+            setBusy(true);
+            log(`Geri yükleme başlatıldı: ${file}`, 'warn');
+            const r = await window.backup.runRestore(file);
+            if (r.ok) {
+                log(`✓ ${r.message}`, 'success');
+                alert('Geri yükleme tamamlandı. Ana uygulamayı yeniden başlatın.');
+            } else {
+                log(`✗ Hata: ${r.error}`, 'error');
+            }
+            setBusy(false);
+        };
+
+        $('btnPickFolder').addEventListener('click', async () => {
+            const def = currentDestFolder || (await window.backup.defaultFolder());
+            const folder = await window.backup.pickFolder(def);
+            if (folder) {
+                currentDestFolder = folder;
+                $('backupDest').value = folder;
+                log(`Hedef klasör: ${folder}`, 'info');
+                await refreshExisting();
+            }
+        });
+
+        $('btnPickFile').addEventListener('click', async () => {
+            const def = currentDestFolder || (await window.backup.defaultFolder());
+            const file = await window.backup.pickFile(def);
+            if (file) {
+                $('restoreFile').value = file;
+                log(`Geri yükleme dosyası: ${file}`, 'info');
+            }
+        });
+
+        $('btnBackup').addEventListener('click', runBackup);
+        $('btnRestore').addEventListener('click', runRestore);
+        $('btnRefreshDrives').addEventListener('click', () => {
+            log('Sürücüler yenileniyor...', 'info');
+            refreshDrives();
+        });
+
+        (async () => {
+            await loadConfig();
+            await refreshDrives();
+            const def = await window.backup.defaultFolder();
+            currentDestFolder = def;
+            $('backupDest').value = def;
+            await refreshExisting();
+        })();
+    </script>
+</body>
+</html>

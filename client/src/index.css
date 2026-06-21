@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/* Gece modu: 'dark' sınıfı <html>'e theme.js tarafından eklenir (class tabanlı,
+   sistem tercihi DEĞİL — kullanıcı başlıktaki anahtarla seçer). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    /* Tema geçişinde yumuşak renk değişimi (sayfa gezinmelerini etkilemez). */
+    transition: background-color .25s ease, color .25s ease;
+  }
+
+  /* Kurumsal odak halkası — klavye erişilebilirliği için tutarlı görünüm. */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brand-500/60 ring-offset-1;
+  }
+
+  /* İnce, kurumsal kaydırma çubuğu (Webkit). */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1; border-radius: 999px; border: 2px solid transparent; background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: padding-box; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  ::selection { background: rgba(16, 185, 129, 0.18); }
+}
+
+@layer components {
+  .btn-primary {
+    /* Hafif dikey gradyan + marka gölgesi — düz renkten daha "dolgun" buton. */
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-b from-brand-500 to-brand-600 text-white rounded-lg hover:from-brand-600 hover:to-brand-700 active:from-brand-700 active:to-brand-800 transition-all duration-150 font-semibold shadow-sm shadow-brand-600/25 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 transition-colors duration-150 font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors duration-150 font-semibold shadow-sm focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-field {
+    @apply w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-slate-800 placeholder-slate-400 hover:border-slate-400 focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 outline-none transition-[box-shadow,border-color] bg-white disabled:bg-slate-50 disabled:text-slate-400;
+  }
+
+  /* Form etiketi — tutarlı kurumsal tipografi. */
+  .form-label {
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+
+  .card {
+    /* transition: tema geçişinde (gece modu) renkler yumuşak değişsin. */
+    @apply bg-white p-6 rounded-xl shadow-card border border-slate-200/80 transition-colors duration-200;
+  }
+
+  /* Sayfa başlığı bloğu — her sayfada aynı hizalama/aralık. */
+  .page-title {
+    @apply text-2xl font-bold text-slate-800 tracking-tight;
+  }
+  .page-subtitle {
+    @apply text-sm text-slate-500 mt-1;
+  }
+  .section-title {
+    @apply text-base font-bold text-slate-800 flex items-center gap-2;
+  }
+
+  /* Durum/etiket rozeti tabanı. Renk sınıfları (bg ve text) ayrıca verilir. */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap;
+  }
+}
+
+/* ── GECE MODU KATMANI ──────────────────────────────────────────────────────
+   Strateji: ERP sayfaları (~30 ekran) açık temanın yaygın utility sınıflarını
+   kullanır (bg-white, text-slate-800, border-slate-200…). Her sayfaya dark:
+   varyant eklemek yerine en sık kullanılan yüzey/metin/çerçeve sınıfları
+   burada `.dark` kapsamında yeniden haritalanır → tüm uygulama tek yerden
+   kararır. Katmansız (unlayered) CSS, Tailwind utility katmanını her zaman
+   yener; !important gerekmez. Yeni sayfalar aynı sınıfları kullandıkça
+   kendiliğinden gece moduna uyar.
+   Palet: zemin #0f172a · yüzey #1e293b · kabarık #26334d · çerçeve #334155
+          metin #f1f5f9 / #cbd5e1 / #94a3b8                                   */
+
+.dark { color-scheme: dark; }
+.dark body { background-color: #0f172a; color: #e2e8f0; }
+
+/* Yüzeyler */
+.dark .bg-white { background-color: #1e293b; }
+.dark .bg-slate-50 { background-color: #16223b; }
+.dark .bg-slate-100 { background-color: #243049; }
+.dark .bg-slate-200 { background-color: #334155; }
+.dark .bg-white\/85 { background-color: rgba(15, 23, 42, .85); }
+
+/* Metin */
+.dark .text-slate-900, .dark .text-slate-800 { color: #f1f5f9; }
+.dark .text-slate-700 { color: #cbd5e1; }
+.dark .text-slate-600, .dark .text-slate-500 { color: #94a3b8; }
+.dark .text-slate-400 { color: #748296; }
+.dark .text-black { color: #f1f5f9; }
+
+/* Çerçeve ve ayırıcılar */
+.dark .border-slate-100 { border-color: #243049; }
+.dark .border-slate-200, .dark .border-slate-200\/80, .dark .border-slate-300 { border-color: #334155; }
+.dark .divide-slate-100 > :not(:last-child),
+.dark .divide-slate-200 > :not(:last-child) { border-color: #2a3850; }
+.dark .ring-white { --tw-ring-color: #1e293b; }
+
+/* Sık kullanılan hover durumları */
+.dark .hover\:bg-slate-50:hover { background-color: #26334d; }
+.dark .hover\:bg-slate-100:hover { background-color: #2c3a57; }
+.dark .hover\:bg-slate-200:hover { background-color: #334155; }
+.dark .hover\:text-slate-900:hover, .dark .hover\:text-slate-800:hover { color: #f8fafc; }
+.dark .hover\:border-slate-400:hover { border-color: #475569; }
+
+/* Gölgeler — koyu zeminde daha derin, daha az "gri sis" */
+.dark .shadow-card { box-shadow: 0 1px 2px 0 rgba(0,0,0,.35), 0 1px 3px 0 rgba(0,0,0,.4); }
+.dark .shadow-card-hover, .dark .hover\:shadow-card-hover:hover { box-shadow: 0 6px 16px -4px rgba(0,0,0,.5), 0 3px 8px -3px rgba(0,0,0,.45); }
+.dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,.4); }
+
+/* Bileşen sınıfları (@apply derlendiği için utility override'ları yakalamaz) */
+.dark .card { background-color: #1e293b; border-color: #334155; }
+.dark .input-field {
+  background-color: #16223b; border-color: #3b4a63; color: #f1f5f9;
+}
+.dark .input-field::placeholder { color: #64748b; }
+.dark .input-field:disabled { background-color: #1b2740; color: #64748b; }
+.dark .btn-secondary {
+  background-color: #243049; border-color: #3b4a63; color: #e2e8f0;
+}
+.dark .btn-secondary:hover { background-color: #2c3a57; border-color: #475569; }
+.dark .btn-secondary:active { background-color: #334155; }
+.dark .form-label, .dark .section-title, .dark .page-title { color: #e2e8f0; }
+.dark .page-subtitle { color: #94a3b8; }
+
+/* Renkli bilgi kutuları/rozetler: açık pastel zeminler koyu temada parlamasın,
+   üzerindeki koyu renkli metinler okunur açık tonlara çekilsin. */
+.dark .bg-brand-50, .dark .bg-emerald-50, .dark .bg-green-50 { background-color: rgba(16,185,129,.13); }
+.dark .bg-brand-100, .dark .bg-emerald-100, .dark .bg-green-100 { background-color: rgba(16,185,129,.2); }
+.dark .bg-red-50 { background-color: rgba(239,68,68,.13); }
+.dark .bg-red-100 { background-color: rgba(239,68,68,.2); }
+.dark .bg-amber-50, .dark .bg-yellow-50 { background-color: rgba(245,158,11,.13); }
+.dark .bg-amber-100, .dark .bg-yellow-100 { background-color: rgba(245,158,11,.2); }
+.dark .bg-blue-50, .dark .bg-sky-50 { background-color: rgba(59,130,246,.13); }
+.dark .bg-blue-100, .dark .bg-sky-100 { background-color: rgba(59,130,246,.2); }
+.dark .bg-indigo-50 { background-color: rgba(99,102,241,.13); }
+.dark .bg-indigo-100 { background-color: rgba(99,102,241,.2); }
+.dark .bg-purple-50 { background-color: rgba(168,85,247,.13); }
+.dark .bg-purple-100 { background-color: rgba(168,85,247,.2); }
+.dark .bg-orange-50 { background-color: rgba(249,115,22,.13); }
+.dark .bg-orange-100 { background-color: rgba(249,115,22,.2); }
+
+.dark .text-brand-700, .dark .text-brand-800, .dark .text-emerald-700, .dark .text-emerald-800,
+.dark .text-green-700, .dark .text-green-800 { color: #34d399; }
+.dark .text-red-700, .dark .text-red-800 { color: #f87171; }
+.dark .text-amber-700, .dark .text-amber-800, .dark .text-yellow-700, .dark .text-yellow-800 { color: #fbbf24; }
+.dark .text-blue-700, .dark .text-blue-800, .dark .text-sky-700 { color: #60a5fa; }
+.dark .text-indigo-700, .dark .text-indigo-800 { color: #818cf8; }
+.dark .text-purple-700, .dark .text-purple-800 { color: #c084fc; }
+.dark .text-orange-700, .dark .text-orange-800 { color: #fb923c; }
+
+.dark .border-brand-200, .dark .border-emerald-200, .dark .border-green-200 { border-color: rgba(16,185,129,.35); }
+.dark .border-red-200 { border-color: rgba(239,68,68,.35); }
+.dark .border-amber-200, .dark .border-yellow-200 { border-color: rgba(245,158,11,.35); }
+.dark .border-blue-200, .dark .border-sky-200 { border-color: rgba(59,130,246,.35); }
+
+/* Kaydırma çubuğu ve seçim */
+.dark ::-webkit-scrollbar-thumb { background: #334155; background-clip: padding-box; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; background-clip: padding-box; }
+.dark ::selection { background: rgba(16, 185, 129, 0.3); }
+
+/* ── Markalı tam-ekran yükleme göstergesi ──────────────────────────────────
+   Açılış kapıları (SetupGate/LicenseGate/ProtectedRoute) bunu kullanır;
+   düz "Yükleniyor..." yazısı yerine kurumsal, animasyonlu marka ekranı. */
+.app-loader {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+  background: radial-gradient(120% 120% at 50% 0%, #134e3a 0%, #0f172a 55%, #0b1120 100%);
+  color: #e2e8f0;
+}
+.app-loader__logo {
+  width: 72px; height: 72px; border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(145deg, #10b981, #047857);
+  box-shadow: 0 18px 40px -12px rgba(16, 185, 129, 0.55);
+  animation: app-loader-float 2.4s ease-in-out infinite;
+}
+.app-loader__bar {
+  width: 200px; height: 4px; border-radius: 999px;
+  background: rgba(148, 163, 184, 0.18); overflow: hidden; position: relative;
+}
+.app-loader__bar::after {
+  content: ""; position: absolute; top: 0; left: -40%; width: 40%; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #34d399, #10b981, transparent);
+  animation: app-loader-slide 1.25s ease-in-out infinite;
+}
+.app-loader__text { font-size: 13px; color: #94a3b8; letter-spacing: 0.3px; }
+@keyframes app-loader-slide { 0% { left: -40%; } 100% { left: 100%; } }
+@keyframes app-loader-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* ── Fiş yazdırma şablonu ──────────────────────────────────────────────────
+   Şablon ekranda gizlidir; yalnızca yazdırma anında, <body> üzerine
+   'printing-receipt' sınıfı eklenince (ServiceDetail tarafından) görünür.
+   Bu sınıf sayesinde global @media print kuralları diğer sayfalardaki
+   yazdırmaları (QR etiket, kabul formu) ETKİLEMEZ. */
+.receipt-print { display: none; }
+
+@media print {
+  @page { margin: 0; }
+
+  body.printing-receipt {
+    margin: 0 !important;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Sidebar, navbar, butonlar, inputlar dahil tüm arayüzü gizle */
+  body.printing-receipt * { visibility: hidden !important; }
+
+  /* Aynı sayfadaki QR etiket şablonu fiş yazdırırken tamamen kaldırılır
+     (ServiceLabel kendi görünürlük kuralını uyguluyor; display:none onu da bastırır) */
+  body.printing-receipt .label-print { display: none !important; }
+
+  /* Yazıcıya yalnızca fiş şablonunu gönder */
+  body.printing-receipt .receipt-print,
+  body.printing-receipt .receipt-print * { visibility: visible !important; }
+
+  body.printing-receipt .receipt-print {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

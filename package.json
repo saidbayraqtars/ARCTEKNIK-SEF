@@ -1,0 +1,20 @@
+{
+  "name": "arcteknik-sef",
+  "version": "1.10.4",
+  "private": true,
+  "description": "ArcTeknik Şef — bağımsız restoran otomasyonu: backend (server/) + frontend (client/) + masaüstü launcher (desktop/). ArcTeknik ERP ayrı klasör/repo.",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "start": "npm run start --prefix server",
+    "build": "npm run build --prefix client",
+    "build:desktop": "npm run build:desktop --prefix client",
+    "dist": "npm run dist --prefix desktop",
+    "dist:dir": "npm run dist:dir --prefix desktop",
+    "release": "npm run release --prefix desktop"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

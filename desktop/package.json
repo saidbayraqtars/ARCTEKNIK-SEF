@@ -1,0 +1,23 @@
+{
+  "name": "arcteknik-sef-desktop",
+  "version": "1.10.4",
+  "description": "ArcTeknik Şef — Masaüstü (bağımsız restoran otomasyonu)",
+  "main": "main.js",
+  "author": "Bayraktar Yazılım",
+  "scripts": {
+    "start": "electron .",
+    "start:backup": "electron . --backup-mode",
+    "dist": "electron-builder --win --x64 --publish never",
+    "dist:dir": "electron-builder --win --x64 --dir --publish never",
+    "release": "electron-builder --win --x64 --publish always"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8",
+    "png-to-ico": "^3.0.1"
+  },
+  "dependencies": {
+    "electron-log": "^5.4.4",
+    "electron-updater": "^6.8.3"
+  }
+}

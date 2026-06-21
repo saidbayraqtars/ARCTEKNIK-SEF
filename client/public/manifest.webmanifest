@@ -1,0 +1,15 @@
+{
+  "name": "ArcTeknik Şef — Garson",
+  "short_name": "Şef Garson",
+  "description": "Mobil garson el terminali — masaya sipariş al, mutfağa gönder.",
+  "start_url": "/restoran/garson",
+  "scope": "/restoran/garson",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" }
+  ]
+}
